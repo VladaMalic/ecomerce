@@ -16,6 +16,10 @@ public class UserService implements UserDetailsService {
 
     private final UserRepository userRep;
 
+    public UserService(UserRepository userRep) {
+        this.userRep = userRep;
+    }
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return Objects.requireNonNull(

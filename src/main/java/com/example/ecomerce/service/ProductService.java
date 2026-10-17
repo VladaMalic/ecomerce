@@ -6,6 +6,8 @@ import com.example.ecomerce.model.User;
 import com.example.ecomerce.repository.ProductRepository;
 import com.example.ecomerce.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -19,6 +21,10 @@ public class ProductService {
 
     private final ProductRepository productRep;
 
+    public ProductService(ProductRepository productRep) {
+        this.productRep = productRep;
+    }
+    @CacheEvict(value = "products", allEntries = true)
     public void createProduct(ProductDTO product) {
         Product toSave = new Product();
         toSave.setName(product.getName());
@@ -35,14 +41,17 @@ public class ProductService {
         return productRep.findById(id).orElse(null);
     }
 
+    @CacheEvict(value = "products", allEntries = true)
     public void deleteProduct(Long id){
         productRep.deleteById(id);
     }
 
+    @Cacheable("products")
     public List<Product> getAllProducts(){
         return productRep.findAll();
     }
 
+    @CacheEvict(value = "products", allEntries = true)
     public void updateProduct(Long id, ProductDTO productDto){
         Product current = getProductById(id);
         Objects.requireNonNull(current, "The product can not be null");

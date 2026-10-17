@@ -4,6 +4,8 @@ import com.example.ecomerce.dto.CategoryDTO;
 import com.example.ecomerce.model.Category;
 import com.example.ecomerce.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -16,6 +18,11 @@ public class CategoryService {
 
     private final CategoryRepository categoryRep;
 
+    public CategoryService(CategoryRepository categoryRep) {
+        this.categoryRep = categoryRep;
+    }
+
+    @CacheEvict(value = "categories", allEntries = true)
     public Category createCategory(CategoryDTO dto) {
         String name = validateName(dto);
         if (categoryRep.existsByName(name)) {
@@ -26,6 +33,7 @@ public class CategoryService {
         return categoryRep.save(category);
     }
 
+    @Cacheable("categories")
     public List<Category> getAllCategories() {
         return categoryRep.findAll();
     }
@@ -35,6 +43,7 @@ public class CategoryService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Categoria nu exista: " + id));
     }
 
+    @CacheEvict(value = "categories", allEntries = true)
     public Category updateCategory(Long id, CategoryDTO dto) {
         Category category = getCategoryById(id);
         String name = validateName(dto);
@@ -44,7 +53,7 @@ public class CategoryService {
         category.setName(name);
         return categoryRep.save(category);
     }
-
+    @CacheEvict(value = "categories", allEntries = true)
     public void deleteCategory(Long id) {
         getCategoryById(id); // arunca 404 daca nu exista
         categoryRep.deleteById(id);

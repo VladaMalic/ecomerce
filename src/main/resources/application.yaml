@@ -1,12 +1,12 @@
 server:
-  port: 8081
+  port: 8080
 spring:
   application:
     name: ecomerce
   datasource:
     url: jdbc:postgresql://localhost:5432/e-commerce
     username: postgres
-    password: root
+    password: 123
     driver-class-name: org.postgresql.Driver
 
   jpa:
