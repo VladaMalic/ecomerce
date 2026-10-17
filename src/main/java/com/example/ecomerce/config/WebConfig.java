@@ -59,6 +59,7 @@ public class WebConfig {
     }
 
     /// enpoint-uri
-    private static final String[] WHITE_AREA = {"/user/add", "/authentication", "/login", "/", "/manual/login"};
+    private static final String[] WHITE_AREA = {"/user/add", "/authentication", "/login", "/", "/manual/login", "/products/all", "/products/{id}", "/products/delete/{id}", "/products/add", "/category", "/category/{id}"};
     private static final String[] RESTRICTED_AREA = {"/user/me", "/resctricted"};
+
 }
