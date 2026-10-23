@@ -1,6 +1,9 @@
 package com.example.ecomerce.dto;
 
 public class UserDTO {
+    public UserDTO() {
+    }
+
     private String username;
     private String email;
     private String password;

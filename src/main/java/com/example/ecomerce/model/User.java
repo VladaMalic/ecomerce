@@ -1,8 +1,7 @@
 package com.example.ecomerce.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -13,8 +12,6 @@ import java.util.Collection;
 import java.util.List;
 
 @Entity
-@Getter
-@Setter
 @Table(name = "users")
 public class User implements UserDetails {
     @Id
@@ -68,6 +65,7 @@ public class User implements UserDetails {
     }
 
     public void setEmail(String email) {
+        this.email = email;
     }
 
     public Long getId() {
@@ -87,6 +85,7 @@ public class User implements UserDetails {
     }
 
     @Override
+    @JsonIgnore
     public @Nullable String getPassword() {
         return password;
     }

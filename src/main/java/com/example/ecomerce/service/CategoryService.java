@@ -3,7 +3,6 @@ package com.example.ecomerce.service;
 import com.example.ecomerce.dto.CategoryDTO;
 import com.example.ecomerce.model.Category;
 import com.example.ecomerce.repository.CategoryRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
@@ -13,7 +12,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
+
 public class CategoryService {
 
     private final CategoryRepository categoryRep;

@@ -2,19 +2,12 @@ package com.example.ecomerce.model;
 
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import org.antlr.v4.runtime.misc.NotNull;
-import org.hibernate.annotations.NotFound;
-import org.springframework.validation.annotation.Validated;
+import jakarta.validation.constraints.NotNull;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 
 @Entity
-@Getter
-@Setter
 @Table(name = "products")
 public class Product implements Serializable {
     @Id
@@ -36,7 +29,7 @@ public class Product implements Serializable {
     @NotNull
     private int stock = 0;
 
-    @Column(name = "category_id ")
+    @Column(name = "category_id")
     private long category_id ;
 
     @Column(name = "created_at")

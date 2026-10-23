@@ -4,6 +4,7 @@ import com.example.ecomerce.dto.CategoryDTO;
 import com.example.ecomerce.model.Category;
 import com.example.ecomerce.service.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -21,11 +22,9 @@ public class CategoryController {
 
     private final CategoryService service;
 
-    public CategoryController(CategoryService service) {
-        this.service = service;
-    }
 
     @GetMapping
+    @Parameter(name = "getAllCategories", description = "A list of all categories")
     @Operation(summary = "List of all categories")
     @ApiResponse(responseCode = "200", description = "List returned successfully")
     public List<Category> getAll() {
@@ -38,9 +37,10 @@ public class CategoryController {
     }
 
     @PostMapping
+    @Parameter(name = "create category", description = "create a new category", example = "send something - gets something else")
     @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "Creates a new category", security = @SecurityRequirement(name = "bearerAuth"))
-    @ApiResponse(responseCode = "200", description = "The new category was created")
+    @Operation(summary = "Creates a new category", security = @SecurityRequirement(name = "basicAuth"))
+    @ApiResponse(responseCode = "201", description = "The new category was created")
     @ApiResponse(responseCode = "400", description = "The name is empty")
     @ApiResponse(responseCode = "401", description = "Not authenticated")
     @ApiResponse(responseCode = "409", description = "Category already exists")
@@ -55,8 +55,8 @@ public class CategoryController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Operation(summary = "Deletes a category", security = @SecurityRequirement(name = "bearerAuth"))
-    @ApiResponse(responseCode = "200", description = "The category was deleted")
+    @Operation(summary = "Deletes a category", security = @SecurityRequirement(name = "basicAuth"))
+    @ApiResponse(responseCode = "204", description = "The category was deleted")
     @ApiResponse(responseCode = "404", description = "The category does not exist")
     public void delete(@PathVariable Long id) {
         service.deleteCategory(id);

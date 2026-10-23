@@ -8,7 +8,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -16,7 +15,7 @@ import java.security.Principal;
 import java.time.LocalDateTime;
 
 @RestController
-@RequiredArgsConstructor
+
 @Tag(name = "Users", description = "Managing users")
 public class UserController {
     private final UserService service;
@@ -31,11 +30,9 @@ public class UserController {
     }
 
     @PostMapping("/user/add")
-    @Operation(summary = "Creates a new user", security = @SecurityRequirement(name = "bearerAuth"))
+    @Operation(summary = "Creates a new user", security = @SecurityRequirement(name = "basicAuth"))
     @ApiResponse(responseCode = "200", description = "The new user was created")
-    @ApiResponse(responseCode = "400", description = "The name is empty")
     @ApiResponse(responseCode = "401", description = "Not authenticated")
-    @ApiResponse(responseCode = "409", description = "User already exists")
     public void createUser(@RequestBody UserDTO dto){
         User user = new User();
         user.setUsername(dto.getUsername());
@@ -47,7 +44,7 @@ public class UserController {
     }
 
     @DeleteMapping("/user/delete/{id}")
-    @Operation(summary = "Deletes a user", security = @SecurityRequirement(name = "bearerAuth"))
+    @Operation(summary = "Deletes a user", security = @SecurityRequirement(name = "basicAuth"))
     @ApiResponse(responseCode = "200", description = "The user was deleted")
     @ApiResponse(responseCode = "404", description = "The user does not exist")
     public void deleteUserAPI(@PathVariable(name = "id") Long id){

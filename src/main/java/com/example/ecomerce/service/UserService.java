@@ -2,16 +2,16 @@ package com.example.ecomerce.service;
 
 import com.example.ecomerce.model.User;
 import com.example.ecomerce.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Objects;
 
 @Service
-@RequiredArgsConstructor
+
 public class UserService implements UserDetailsService {
 
     private final UserRepository userRep;
@@ -22,21 +22,25 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return Objects.requireNonNull(
-                userRep.findUserByUsername(username), "Username does not exists: " + username
-        );
+        User user = userRep.findUserByUsername(username);
+        if (user == null) {
+            throw new UsernameNotFoundException("User not found: " + username);
+        }
+        return user;
     }
 
     public void createUser(User user){
         userRep.save(user);
     }
 
-    public User getUserById(Long id){
-        return userRep.findById(id).orElseThrow();
+    public User getUserById(Long id) {
+        return userRep.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "User not found: " + id));
     }
 
-    public void deleteUser(Long id){
-        userRep.deleteById(id);
+    public void deleteUser(Long id) {
+        userRep.delete(getUserById(id));
     }
 
     public User updateUser(Long id, String email){

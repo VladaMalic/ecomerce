@@ -1,0 +1,418 @@
+openapi: 3.1.0
+info:
+  title: Ecommerce API
+  description: REST API for managing users, products, and product categories.
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+    description: Local development server
+
+tags:
+  - name: Categories
+    description: Managing product categories
+  - name: Products
+    description: Managing products
+  - name: Users
+    description: Managing users
+
+paths:
+  /category:
+    get:
+      tags: [Categories]
+      operationId: getAllCategories
+      summary: List all categories
+      responses:
+        '200':
+          description: Categories returned successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Category'
+    post:
+      tags: [Categories]
+      operationId: createCategory
+      summary: Create a category
+      security:
+        - basicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CategoryRequest'
+      responses:
+        '201':
+          description: Category created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
+          description: A category with this name already exists
+  /category/{id}:
+    parameters:
+      - $ref: '#/components/parameters/Id'
+    get:
+      tags: [Categories]
+      operationId: getCategoryById
+      summary: Get a category by ID
+      responses:
+        '200':
+          description: Category returned successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    put:
+      tags: [Categories]
+      operationId: updateCategory
+      summary: Update a category
+      security:
+        - basicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CategoryRequest'
+      responses:
+        '200':
+          description: Category updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          description: A category with this name already exists
+    delete:
+      tags: [Categories]
+      operationId: deleteCategory
+      summary: Delete a category
+      security:
+        - basicAuth: []
+      responses:
+        '204':
+          description: Category deleted
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /products/all:
+    get:
+      tags: [Products]
+      operationId: getAllProducts
+      summary: List all products
+      responses:
+        '200':
+          description: Products returned successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+
+  /products/{id}:
+    parameters:
+      - $ref: '#/components/parameters/Id'
+    get:
+      tags: [Products]
+      operationId: getProductById
+      summary: Get a product by ID
+      responses:
+        '200':
+          description: Product returned successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    put:
+      tags: [Products]
+      operationId: updateProduct
+      summary: Update a product
+      security:
+        - basicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductRequest'
+      responses:
+        '200':
+          description: Product updated
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /products/add:
+    post:
+      tags: [Products]
+      operationId: createProduct
+      summary: Create a product
+      security:
+        - basicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductRequest'
+      responses:
+        '200':
+          description: Product created
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /products/delete/{id}:
+    delete:
+      tags: [Products]
+      operationId: deleteProduct
+      summary: Delete a product
+      security:
+        - basicAuth: []
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      responses:
+        '200':
+          description: Product deleted
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /user/{id}:
+    parameters:
+      - $ref: '#/components/parameters/Id'
+    get:
+      tags: [Users]
+      operationId: getUserById
+      summary: Get a user by ID
+      responses:
+        '200':
+          description: User returned successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /user/add:
+    post:
+      tags: [Users]
+      operationId: createUser
+      summary: Create a user
+      security:
+        - basicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRequest'
+      responses:
+        '200':
+          description: User created
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /user/delete/{id}:
+    delete:
+      tags: [Users]
+      operationId: deleteUser
+      summary: Delete a user
+      security:
+        - basicAuth: []
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      responses:
+        '200':
+          description: User deleted
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /user/update/{id}/{email}:
+    post:
+      tags: [Users]
+      operationId: updateUserEmail
+      summary: Update a user's email
+      security:
+        - basicAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: email
+          in: path
+          required: true
+          schema:
+            type: string
+            format: email
+      responses:
+        '200':
+          description: User email updated
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /user/me:
+    get:
+      tags: [Users]
+      operationId: getCurrentUserPage
+      summary: Redirect to the home page
+      description: This endpoint redirects the authenticated request to the home page rather than returning a user representation.
+      security:
+        - basicAuth: []
+      responses:
+        '302':
+          description: Redirect to the home page
+          headers:
+            Location:
+              schema:
+                type: string
+                example: /
+
+components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+  parameters:
+    Id:
+      name: id
+      in: path
+      required: true
+      description: Resource identifier
+      schema:
+        type: integer
+        format: int64
+        minimum: 1
+  responses:
+    BadRequest:
+      description: Invalid request data
+    Unauthorized:
+      description: Authentication is required or invalid
+    NotFound:
+      description: Resource not found
+  schemas:
+    Category:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          readOnly: true
+        name:
+          type: string
+          maxLength: 100
+      required: [name]
+    CategoryRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 100
+      required: [name]
+    Product:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          readOnly: true
+        name:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+          format: double
+          minimum: 0
+        stock:
+          type: integer
+          minimum: 0
+        category_id:
+          type: integer
+          format: int64
+        date:
+          type: string
+          format: date-time
+          readOnly: true
+      required: [name, price, stock, category_id]
+    ProductRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+          format: double
+          minimum: 0
+        stock:
+          type: integer
+          minimum: 0
+        category_id:
+          type: integer
+          format: int64
+      required: [name, price, stock, category_id]
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          readOnly: true
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+        role:
+          type: string
+        date:
+          type: string
+          format: date-time
+          readOnly: true
+      required: [username, email]
+    UserRequest:
+      type: object
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+          writeOnly: true
+      required: [username, email, password]
