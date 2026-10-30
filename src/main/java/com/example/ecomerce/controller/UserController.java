@@ -1,5 +1,6 @@
 package com.example.ecomerce.controller;
 
+import com.example.ecomerce.dto.MeResponse;
 import com.example.ecomerce.dto.UserDTO;
 import com.example.ecomerce.model.User;
 import com.example.ecomerce.service.UserService;
@@ -12,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.security.Principal;
-import java.time.LocalDateTime;
 
 @RestController
 
@@ -34,13 +34,7 @@ public class UserController {
     @ApiResponse(responseCode = "200", description = "The new user was created")
     @ApiResponse(responseCode = "401", description = "Not authenticated")
     public void createUser(@RequestBody UserDTO dto){
-        User user = new User();
-        user.setUsername(dto.getUsername());
-        user.setEmail(dto.getEmail());
-        user.setPassword(dto.getPassword());
-        user.setRole("USER");
-        user.setDate(LocalDateTime.now());
-        service.createUser(user);
+        service.createUser(dto);
     }
 
     @DeleteMapping("/user/delete/{id}")
@@ -60,6 +54,15 @@ public class UserController {
     public void getInfo(Principal principal, HttpServletResponse response) throws IOException {
         System.out.println(principal);
         response.sendRedirect("/");
+    }
+
+    @GetMapping("/api/auth/me")
+    @Operation(summary = "Returns the authenticated user's profile",
+            security = @SecurityRequirement(name = "basicAuth"))
+    @ApiResponse(responseCode = "200", description = "Profile returned successfully")
+    @ApiResponse(responseCode = "401", description = "Not authenticated")
+    public MeResponse getCurrentUser(Principal principal) {
+        return service.getCurrentUser(principal.getName());
     }
 
 }
