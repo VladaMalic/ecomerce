@@ -1,5 +1,6 @@
 package com.example.ecomerce.service;
 
+import com.example.ecomerce.dto.ProductCatalogResponse;
 import com.example.ecomerce.dto.ProductDTO;
 import com.example.ecomerce.model.Product;
 import com.example.ecomerce.repository.ProductRepository;
@@ -18,9 +19,11 @@ public class ProductService {
     //CRUD
 
     private final ProductRepository productRep;
+    private final DiscountService discountService;
 
-    public ProductService(ProductRepository productRep) {
+    public ProductService(ProductRepository productRep, DiscountService discountService) {
         this.productRep = productRep;
+        this.discountService = discountService;
     }
     @CacheEvict(value = "products", allEntries = true)
     public void createProduct(ProductDTO product) {
@@ -48,8 +51,14 @@ public class ProductService {
     }
 
     @Cacheable("products")
-    public List<Product> getAllProducts(){
-        return productRep.findAll();
+    public List<ProductCatalogResponse> getAllProducts(){
+        return productRep.findAll().stream()
+                .map(this::toCatalogResponse)
+                .toList();
+    }
+
+    public ProductCatalogResponse getProductDetails(Long id) {
+        return toCatalogResponse(getProductById(id));
     }
 
     @CacheEvict(value = "products", allEntries = true)
@@ -61,6 +70,20 @@ public class ProductService {
         current.setStock(productDto.getStock());
         current.setCategory_id(productDto.getCategory_id());
         productRep.save(current);
+    }
+
+    private ProductCatalogResponse toCatalogResponse(Product product) {
+        DiscountService.Discount discount = discountService.getDiscount(product);
+        return new ProductCatalogResponse(
+                product.getId(),
+                product.getName(),
+                product.getDescription(),
+                discount.price(),
+                discount.originalPrice(),
+                discount.discountPercentage(),
+                product.getStock(),
+                product.getCategory_id(),
+                product.getDate());
     }
 
 }

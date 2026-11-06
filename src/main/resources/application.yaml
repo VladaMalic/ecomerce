@@ -17,3 +17,7 @@ spring:
       ddl-auto: update
     show-sql: false
 
+discounts:
+  category-percentage:
+    category-name: Accesorii
+    percentage: 15

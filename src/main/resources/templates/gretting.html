@@ -1,10 +1,152 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ro">
 <head>
     <meta charset="UTF-8">
-    <title>Grettings</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catalog | Ecomerce</title>
+    <style>
+        body {
+            margin: 0;
+            color: #202124;
+            background: #f5f6f8;
+            font-family: Arial, sans-serif;
+        }
+        header {
+            padding: 2rem max(1.5rem, calc((100% - 1100px) / 2));
+            color: white;
+            background: #202124;
+        }
+        header h1, header p {
+            margin: 0;
+        }
+        header p {
+            margin-top: .5rem;
+            color: #d7d9dc;
+        }
+        main {
+            max-width: 1100px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+        #catalog {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+            gap: 1rem;
+        }
+        .product {
+            padding: 1.25rem;
+            border-radius: 10px;
+            background: white;
+            box-shadow: 0 2px 8px #0000000d;
+        }
+        .product h2 {
+            margin: 0 0 .5rem;
+            font-size: 1.1rem;
+        }
+        .description {
+            min-height: 2.5rem;
+            color: #62676d;
+        }
+        .price {
+            display: flex;
+            align-items: baseline;
+            gap: .6rem;
+            margin: 1rem 0;
+            font-size: 1.2rem;
+        }
+        .current-price {
+            font-weight: 700;
+        }
+        .discounted .current-price {
+            color: #b42318;
+        }
+        .original-price {
+            color: #747980;
+            font-size: .95rem;
+        }
+        .badge {
+            display: inline-block;
+            padding: .3rem .55rem;
+            border-radius: 999px;
+            color: #8f1d14;
+            background: #fee4e2;
+            font-size: .8rem;
+            font-weight: 700;
+        }
+        .availability, #status {
+            color: #62676d;
+        }
+        #status.error {
+            color: #b42318;
+        }
+    </style>
 </head>
 <body>
-Hi
+<header>
+    <h1>Catalog</h1>
+    <p>Descoperă produsele disponibile.</p>
+</header>
+<main>
+    <p id="status" role="status">Se încarcă produsele...</p>
+    <section id="catalog" aria-label="Produse"></section>
+</main>
+<script>
+    const catalog = document.querySelector("#catalog");
+    const status = document.querySelector("#status");
+    const priceFormatter = new Intl.NumberFormat("ro-RO", {
+        style: "currency",
+        currency: "RON"
+    });
+
+    function addText(parent, tag, className, value) {
+        const element = document.createElement(tag);
+        element.className = className;
+        element.textContent = value;
+        parent.append(element);
+        return element;
+    }
+
+    function renderProduct(product) {
+        const card = document.createElement("article");
+        const hasDiscount = Number(product.discountPercentage) > 0;
+        card.className = hasDiscount ? "product discounted" : "product";
+        addText(card, "h2", "", product.name);
+        addText(card, "p", "description", product.description || "");
+
+        const price = document.createElement("p");
+        price.className = "price";
+        if (hasDiscount) {
+            addText(price, "s", "original-price", priceFormatter.format(product.originalPrice));
+            addText(price, "span", "current-price", priceFormatter.format(product.price));
+            addText(card, "span", "badge", `-${product.discountPercentage}%`);
+        } else {
+            addText(price, "span", "current-price", priceFormatter.format(product.price));
+        }
+        card.append(price);
+        addText(card, "p", "availability", `Stoc: ${product.stock}`);
+        catalog.append(card);
+    }
+
+    fetch("/products/all")
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Produsele nu au putut fi încărcate.");
+            }
+            return response.json();
+        })
+        .then(products => {
+            status.hidden = true;
+            if (products.length === 0) {
+                status.hidden = false;
+                status.textContent = "Nu există produse în catalog.";
+                return;
+            }
+            products.forEach(renderProduct);
+        })
+        .catch(() => {
+            status.textContent = "Catalogul nu este disponibil momentan.";
+            status.classList.add("error");
+        });
+</script>
 </body>
 </html>

@@ -1,7 +1,7 @@
 package com.example.ecomerce.controller;
 
+import com.example.ecomerce.dto.ProductCatalogResponse;
 import com.example.ecomerce.dto.ProductDTO;
-import com.example.ecomerce.model.Product;
 import com.example.ecomerce.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -25,13 +25,13 @@ public class ProductController {
     @GetMapping("/products/all")
     @Operation(summary = "List of all products")
     @ApiResponse(responseCode = "200", description = "List returned successfully")
-    public List<Product> getAllProducts(){
+    public List<ProductCatalogResponse> getAllProducts(){
         return productService.getAllProducts();
     }
 
     @GetMapping("/products/{id}")
-    public Product getProductAPI(@PathVariable(name = "id") Long id){
-        return productService.getProductById(id);
+    public ProductCatalogResponse getProductAPI(@PathVariable(name = "id") Long id){
+        return productService.getProductDetails(id);
     }
 
     @DeleteMapping("/products/delete/{id}")

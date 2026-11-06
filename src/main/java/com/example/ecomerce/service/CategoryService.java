@@ -21,7 +21,7 @@ public class CategoryService {
         this.categoryRep = categoryRep;
     }
 
-    @CacheEvict(value = "categories", allEntries = true)
+    @CacheEvict(value = {"categories", "products"}, allEntries = true)
     public Category createCategory(CategoryDTO dto) {
         String name = validateName(dto);
         if (categoryRep.existsByName(name)) {
@@ -42,7 +42,7 @@ public class CategoryService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Categoria nu exista: " + id));
     }
 
-    @CacheEvict(value = "categories", allEntries = true)
+    @CacheEvict(value = {"categories", "products"}, allEntries = true)
     public Category updateCategory(Long id, CategoryDTO dto) {
         Category category = getCategoryById(id);
         String name = validateName(dto);
@@ -52,7 +52,7 @@ public class CategoryService {
         category.setName(name);
         return categoryRep.save(category);
     }
-    @CacheEvict(value = "categories", allEntries = true)
+    @CacheEvict(value = {"categories", "products"}, allEntries = true)
     public void deleteCategory(Long id) {
         getCategoryById(id); // arunca 404 daca nu exista
         categoryRep.deleteById(id);
