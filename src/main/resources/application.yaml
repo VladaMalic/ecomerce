@@ -1,14 +1,8 @@
-server:
-  port: 8080
 spring:
   application:
     name: ecomerce
-  datasource:
-    url: jdbc:postgresql://localhost:5432/e-commerce
-    username: postgres
-    password: admin
-    driver-class-name: org.postgresql.Driver
-
+  profiles:
+    default: dev
   jpa:
     properties:
       hibernate:

@@ -79,6 +79,9 @@
         #status.error {
             color: #b42318;
         }
+        #profile-info {
+            color: #62676d;
+        }
     </style>
 </head>
 <body>
@@ -87,12 +90,14 @@
     <p>Descoperă produsele disponibile.</p>
 </header>
 <main>
+    <p id="profile-info" role="status">Se verifică profilul aplicației...</p>
     <p id="status" role="status">Se încarcă produsele...</p>
     <section id="catalog" aria-label="Produse"></section>
 </main>
 <script>
     const catalog = document.querySelector("#catalog");
     const status = document.querySelector("#status");
+    const profileInfo = document.querySelector("#profile-info");
     const priceFormatter = new Intl.NumberFormat("ro-RO", {
         style: "currency",
         currency: "RON"
@@ -126,6 +131,21 @@
         addText(card, "p", "availability", `Stoc: ${product.stock}`);
         catalog.append(card);
     }
+
+    fetch("/api/config/info")
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Profilul aplicației nu a putut fi verificat.");
+            }
+            return response.json();
+        })
+        .then(config => {
+            profileInfo.textContent = `Profil activ: ${config.activeProfile}`;
+        })
+        .catch(() => {
+            profileInfo.textContent = "Profilul aplicației nu este disponibil.";
+            profileInfo.classList.add("error");
+        });
 
     fetch("/products/all")
         .then(response => {

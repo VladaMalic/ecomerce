@@ -6,20 +6,16 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
-import java.util.List;
 
 @Configuration
 public class WebConfig {
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http){
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, CorsConfigurationSource corsConfigurationSource){
         http
                 /// Permitem comunicarea dintre FrontEnd si BackEnd
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .cors(cors -> cors.configurationSource(corsConfigurationSource))
                 /// Punem restrictii ce endpointuri sunt permitAll si care authenticated
                 .authorizeHttpRequests(req -> req
                         .requestMatchers(RESTRICTED_AREA).authenticated()
@@ -42,24 +38,8 @@ public class WebConfig {
         return new BCryptPasswordEncoder(12);
     }
 
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-
-        configuration.setAllowedOrigins(List.of("http://localhost:3000"));
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(List.of("*"));
-
-        configuration.setAllowCredentials(true);
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/api/**", configuration);
-
-        return source;
-    }
-
     /// enpoint-uri
-    private static final String[] WHITE_AREA = {"/user/add", "/authentication", "/login", "/", "/manual/login", "/products/all", "/products/{id}", "/products/delete/{id}", "/products/add", "/category", "/category/{id}"};
+    private static final String[] WHITE_AREA = {"/user/add", "/authentication", "/login", "/", "/manual/login", "/products/all", "/products/{id}", "/products/delete/{id}", "/products/add", "/category", "/category/{id}", "/api/config/info"};
     private static final String[] RESTRICTED_AREA = {"/user/me", "/api/auth/me", "/resctricted"};
 
 }
